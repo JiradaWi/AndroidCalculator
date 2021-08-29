@@ -13,11 +13,12 @@ import java.lang.NumberFormatException
 class MainActivity : AppCompatActivity() {
     private lateinit var result: EditText
     private lateinit var newNumber: EditText
-    private val displayOperation by lazy{ findViewById<TextView>(R.id.operation)  }
+    private val displayOperation by lazy { findViewById<TextView>(R.id.operation) }
 
     //Variables to hold operands
     private var operand1: Double? = null
-   // private var operand2: Double = 0.0
+
+    // private var operand2: Double = 0.0
     private var pendingOperation = "="
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -41,16 +42,16 @@ class MainActivity : AppCompatActivity() {
         val buttonDot: Button = findViewById(R.id.buttonDot)
 
         //Operation btn
-        val buttonEquals:    Button = findViewById<Button>(R.id.buttonEquals)
-        val buttonDivide:   Button = findViewById<Button>(R.id.buttonDivide)
+        val buttonEquals: Button = findViewById<Button>(R.id.buttonEquals)
+        val buttonDivide: Button = findViewById<Button>(R.id.buttonDivide)
         val buttonMultiply: Button = findViewById<Button>(R.id.buttonMultiply)
-        val buttonMinus:    Button = findViewById<Button>(R.id.buttonMinus)
-        val buttonPlus:     Button = findViewById<Button>(R.id.buttonPlus)
+        val buttonMinus: Button = findViewById<Button>(R.id.buttonMinus)
+        val buttonPlus: Button = findViewById<Button>(R.id.buttonPlus)
 
-        val listener = View.OnClickListener { v->
+        val listener = View.OnClickListener { v ->
             val b = v as Button
             newNumber.append(b.text)
-            Log.d("Tag", "Click!"+ b.text)
+            Log.d("Tag", "Click!" + b.text)
         }
 
 //        button0.setOnClickListener{v->
@@ -69,22 +70,22 @@ class MainActivity : AppCompatActivity() {
         button8.setOnClickListener(listener)
         button9.setOnClickListener(listener)
 
-        val dotListener = View.OnClickListener { v->
+        val dotListener = View.OnClickListener { v ->
             val b = v as Button
-            if(!newNumber.text.contains(".")){
+            if (!newNumber.text.contains(".")) {
                 newNumber.append(b.text)
             }
-            Log.d("Tag", "dot!"+ b.text)
+            Log.d("Tag", "dot!" + b.text)
         }
 
         buttonDot.setOnClickListener(dotListener)
 
-        val opListener = View.OnClickListener { v->
+        val opListener = View.OnClickListener { v ->
             val op = (v as Button).text.toString()
-            try{
+            try {
                 val value = newNumber.text.toString().toDouble()
                 performOperation(value, op)
-            }catch(e: NumberFormatException){
+            } catch (e: NumberFormatException) {
                 newNumber.setText("")
             }
             pendingOperation = op
@@ -98,23 +99,23 @@ class MainActivity : AppCompatActivity() {
         buttonPlus.setOnClickListener(opListener)
     }
 
-    private fun performOperation(value: Double, operation: String){
+    private fun performOperation(value: Double, operation: String) {
 
 
-        if(operand1 == null || operand1!!.isNaN()){
+        if (operand1 == null || operand1!!.isNaN()) {
             operand1 = value
-        }else{
+        } else {
             //operand2 = value
-            if(pendingOperation == "="){
+            if (pendingOperation == "=") {
                 pendingOperation = operation
             }
-            when (pendingOperation){
+            when (pendingOperation) {
                 "=" -> operand1 = value
-                "/" -> if(value == 0.0){
-                        operand1 = Double.NaN
-                    }else{
-                        operand1 = operand1!! / value
-                    }
+                "/" -> if (value == 0.0) {
+                    operand1 = Double.NaN
+                } else {
+                    operand1 = operand1!! / value
+                }
                 "*" -> operand1 = operand1!! * value
                 "-" -> operand1 = operand1!! - value
                 "+" -> operand1 = operand1!! + value
