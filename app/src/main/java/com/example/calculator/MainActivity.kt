@@ -8,6 +8,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import org.w3c.dom.Text
+import java.lang.NumberFormatException
 
 class MainActivity : AppCompatActivity() {
     private lateinit var result: EditText
@@ -16,7 +17,7 @@ class MainActivity : AppCompatActivity() {
 
     //Variables to hold operands
     private var operand1: Double? = null
-    private var operand2: Double = 0.0
+   // private var operand2: Double = 0.0
     private var pendingOperation = "="
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,13 +68,24 @@ class MainActivity : AppCompatActivity() {
         button7.setOnClickListener(listener)
         button8.setOnClickListener(listener)
         button9.setOnClickListener(listener)
-        buttonDot.setOnClickListener(listener)
+
+        val dotListener = View.OnClickListener { v->
+            val b = v as Button
+            if(!newNumber.text.contains(".")){
+                newNumber.append(b.text)
+            }
+            Log.d("Tag", "dot!"+ b.text)
+        }
+
+        buttonDot.setOnClickListener(dotListener)
 
         val opListener = View.OnClickListener { v->
             val op = (v as Button).text.toString()
-            val value = newNumber.text.toString()
-            if(value.isNotEmpty()){
+            try{
+                val value = newNumber.text.toString().toDouble()
                 performOperation(value, op)
+            }catch(e: NumberFormatException){
+                newNumber.setText("")
             }
             pendingOperation = op
             displayOperation.text = pendingOperation
@@ -86,7 +98,29 @@ class MainActivity : AppCompatActivity() {
         buttonPlus.setOnClickListener(opListener)
     }
 
-    private fun performOperation(value: String, operation: String){
-        displayOperation.text = operation
+    private fun performOperation(value: Double, operation: String){
+
+
+        if(operand1 == null || operand1!!.isNaN()){
+            operand1 = value
+        }else{
+            //operand2 = value
+            if(pendingOperation == "="){
+                pendingOperation = operation
+            }
+            when (pendingOperation){
+                "=" -> operand1 = value
+                "/" -> if(value == 0.0){
+                        operand1 = Double.NaN
+                    }else{
+                        operand1 = operand1!! / value
+                    }
+                "*" -> operand1 = operand1!! * value
+                "-" -> operand1 = operand1!! - value
+                "+" -> operand1 = operand1!! + value
+            }
+        }
+        result.setText(operand1.toString())
+        newNumber.setText("")
     }
 }
