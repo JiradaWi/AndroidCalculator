@@ -2,14 +2,13 @@ package com.example.calculator
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.PersistableBundle
 import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
-import org.w3c.dom.Text
 import java.lang.NumberFormatException
+//import kotlinx.android.synthetic.main.activity_main.*
 
 private const val STATE_PENDING_OPERATION = "PendingOperation"
 private const val STATE_OPERAND1 = "Operand1"
@@ -18,7 +17,7 @@ private const val STATE_PENDING_STORED = "Operand1_Stored"
 class MainActivity : AppCompatActivity() {
     private lateinit var result: EditText
     private lateinit var newNumber: EditText
-    private val displayOperation by lazy { findViewById<TextView>(R.id.operation) }
+    private val displayOperation by lazy(LazyThreadSafetyMode.NONE) { findViewById<TextView>(R.id.operation) }
 
     //Variables to hold operands
     private var operand1: Double? = null
@@ -52,6 +51,8 @@ class MainActivity : AppCompatActivity() {
         val buttonMultiply: Button = findViewById<Button>(R.id.buttonMultiply)
         val buttonMinus: Button = findViewById<Button>(R.id.buttonMinus)
         val buttonPlus: Button = findViewById<Button>(R.id.buttonPlus)
+
+        val buttonNeg: Button = findViewById<Button>(R.id.buttonNeg)
 
         val listener = View.OnClickListener { v ->
             val b = v as Button
@@ -102,6 +103,18 @@ class MainActivity : AppCompatActivity() {
         buttonMultiply.setOnClickListener(opListener)
         buttonMinus.setOnClickListener(opListener)
         buttonPlus.setOnClickListener(opListener)
+
+        val negListener = View.OnClickListener { v ->
+            val b = v as Button
+            var result = ""
+            result = if(newNumber.text.isNotBlank() ){
+                (newNumber.text.toString().toDouble()*-1).toString()
+            }else{
+                "-"
+            }
+            newNumber.setText(result)
+        }
+        buttonNeg.setOnClickListener(negListener)
     }
 
     private fun performOperation(value: Double, operation: String) {
